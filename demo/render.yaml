@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: checkitnow-demo
+    runtime: python
+    plan: free
+    rootDir: demo
+    buildCommand: pip install -r requirements-cloud.txt
+    startCommand: python run_cloud.py
+    envVars:
+      - key: PUBLIC_DEMO
+        value: "1"
+      - key: PYTHON_VERSION
+        value: "3.12.0"

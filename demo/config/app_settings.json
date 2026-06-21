@@ -1,0 +1,8 @@
+{
+  "seed_sample_data": true,
+  "desktop_notifications": true,
+  "notification_interval_minutes": 60,
+  "last_notification_at": "",
+  "last_notification_key": "",
+  "data_path": ""
+}

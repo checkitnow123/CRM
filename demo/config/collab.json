@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "users": {
+    "admin": "admin",
+    "user": "user"
+  },
+  "lock_stale_minutes": 30,
+  "heartbeat_interval_seconds": 120
+}

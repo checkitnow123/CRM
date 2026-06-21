@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/assets/logo.png?v=3" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <script>
+    (function () {
+      if (new URLSearchParams(location.search).get("glance") === "1") {
+        document.documentElement.classList.add("mobile-glance");
+        var m = document.querySelector('meta[name="viewport"]');
+        if (m) {
+          m.setAttribute(
+            "content",
+            "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"
+          );
+        }
+      }
+    })();
+  </script>
+  <title>CheckItNow</title>
+  <link rel="stylesheet" href="/css/style.css?v=28" />
+</head>
+<body>
+  <div id="login-overlay" class="login-overlay hidden" role="dialog" aria-modal="true">
+    <form id="form-login" class="login-card">
+      <h2 id="login-title" class="login-title"></h2>
+      <p id="login-desc" class="login-desc"></p>
+      <label class="field-lbl" id="lbl-login-user"></label>
+      <input id="login-user" class="input" autocomplete="username" required />
+      <label class="field-lbl" id="lbl-login-password"></label>
+      <input id="login-password" class="input" type="password" autocomplete="current-password" required />
+      <fieldset class="login-role-fieldset">
+        <legend id="lbl-login-role" class="field-lbl"></legend>
+        <label class="login-role-option">
+          <input type="radio" name="collab-role" value="editor" checked />
+          <span id="lbl-role-editor"></span>
+        </label>
+        <label class="login-role-option">
+          <input type="radio" name="collab-role" value="viewer" />
+          <span id="lbl-role-viewer"></span>
+        </label>
+      </fieldset>
+      <p id="login-demo-hint" class="login-demo-hint"></p>
+      <button type="submit" class="btn btn-primary login-submit" id="btn-login-submit"></button>
+    </form>
+  </div>
+
+  <div id="app" class="app">
+    <header class="topbar">
+      <div class="topbar-row topbar-row--main">
+        <div class="topbar-brand">
+          <img id="brand-logo" class="topbar-logo" src="/assets/logo.png" alt="" />
+          <div class="topbar-brand-text">
+            <h1 id="brand-title" class="topbar-title" title=""></h1>
+            <span id="brand-tagline" class="topbar-tagline"></span>
+          </div>
+        </div>
+        <div class="topbar-tools">
+          <div id="hero-datetime" class="hero-datetime" aria-live="polite">
+            <span id="hero-datetime-label" class="hero-datetime-label"></span>
+            <span id="hero-datetime-value" class="hero-datetime-value">--</span>
+          </div>
+          <div id="lang-bar" class="lang-bar"></div>
+        </div>
+      </div>
+      <div class="topbar-row topbar-row--sub">
+        <nav id="main-nav" class="main-nav topbar-nav" aria-label="Main">
+          <button type="button" class="nav-tab active" data-view="dashboard"></button>
+          <button type="button" class="nav-tab" data-view="clients"></button>
+          <button type="button" class="nav-tab" data-view="milestones"></button>
+        </nav>
+        <div class="topbar-actions">
+          <button type="button" id="btn-settings" class="btn btn-secondary btn-sm"></button>
+          <button type="button" id="btn-add" class="btn btn-add btn-sm"></button>
+          <button type="button" id="btn-manage" class="btn btn-secondary btn-sm"></button>
+        </div>
+      </div>
+    </header>
+
+    <div id="collab-banner" class="collab-banner hidden" role="status">
+      <span id="collab-banner-text" class="collab-banner-text"></span>
+      <div class="collab-banner-actions">
+        <button type="button" id="btn-collab-demote" class="btn btn-secondary btn-sm hidden"></button>
+        <button type="button" id="btn-collab-promote" class="btn btn-secondary btn-sm hidden"></button>
+        <button type="button" id="btn-collab-logout" class="btn btn-secondary btn-sm hidden"></button>
+      </div>
+    </div>
+
+    <div id="alert-banner" class="alert-banner hidden" role="status">
+      <span id="alert-banner-text" class="alert-banner-text"></span>
+      <button type="button" id="alert-banner-action" class="alert-banner-action"></button>
+    </div>
+    <p id="alert-settings-hint" class="alert-settings-hint hidden"></p>
+
+    <section id="kpi-row" class="kpi-row" aria-label="KPI"></section>
+
+    <div id="view-dashboard" class="view-panel">
+      <div class="board-full">
+        <section id="section-priority" class="section-anchor section-panel">
+          <div class="section-head">
+            <h2 class="section-title">
+              <span id="lbl-priority"></span>
+              <span id="badge-priority" class="section-badge"></span>
+            </h2>
+          </div>
+          <div id="priority-list" class="priority-list"></div>
+        </section>
+
+        <section id="section-board" class="section-anchor section-panel">
+          <div class="section-head">
+            <h2 class="section-title">
+              <span id="lbl-board"></span>
+              <span id="badge-board" class="section-badge"></span>
+            </h2>
+          </div>
+          <div id="filter-bar" class="filter-bar"></div>
+          <div id="board-grid" class="board-grid"></div>
+        </section>
+      </div>
+    </div>
+
+    <div id="view-clients" class="view-panel hidden">
+      <div class="clients-page-head">
+        <h2 id="lbl-clients-table" class="section-title"></h2>
+        <p id="clients-filter-count" class="clients-filter-count"></p>
+      </div>
+      <div class="clients-toolbar">
+        <input id="clients-search" class="input clients-search" type="search" autocomplete="off" />
+        <select id="clients-group-filter" class="select clients-group-filter"></select>
+        <select id="clients-account-filter" class="select clients-account-filter"></select>
+        <select id="clients-quick-pick" class="select clients-quick-pick"></select>
+        <button type="button" id="btn-export-excel" class="btn btn-secondary clients-export-btn"></button>
+      </div>
+      <div class="clients-layout">
+        <div class="table-wrap clients-table-wrap">
+          <table class="data-table" id="clients-table">
+            <thead id="clients-thead"></thead>
+            <tbody id="clients-tbody"></tbody>
+          </table>
+        </div>
+        <p id="clients-page-hint" class="clients-page-hint"></p>
+      </div>
+    </div>
+
+    <div id="view-milestones" class="view-panel hidden">
+      <section id="section-milestones" class="section-anchor">
+        <h2 id="lbl-ms-pending" class="section-title"></h2>
+        <div id="ms-pending-list" class="ms-queue-list"></div>
+        <h2 id="lbl-ms-completed" class="section-title"></h2>
+        <div id="ms-completed-list" class="ms-completed-list"></div>
+      </section>
+    </div>
+
+    <p id="footer-note" class="footer-note"></p>
+  </div>
+
+  <button type="button" id="fab-compose" class="fab-compose hidden" aria-label="Compose">
+    <span class="fab-compose-icon">✉</span>
+    <span id="fab-compose-label" class="fab-compose-label"></span>
+  </button>
+
+  <div id="compose-backdrop" class="compose-backdrop hidden"></div>
+  <aside id="compose-drawer" class="compose-drawer" aria-hidden="true">
+    <div class="compose-drawer-inner">
+      <div class="compose-drawer-head">
+        <div>
+          <h2 id="lbl-compose" class="section-title compose-drawer-title"></h2>
+          <p id="lbl-compose-cap" class="compose-cap"></p>
+        </div>
+        <button type="button" id="btn-compose-close" class="compose-drawer-close" aria-label="Close">×</button>
+      </div>
+      <label class="field-lbl" id="lbl-select-client"></label>
+      <select id="compose-client" class="select"></select>
+      <div id="compose-meta" class="compose-meta"></div>
+      <div id="milestone-tracker" class="milestone-tracker hidden"></div>
+      <div class="radio-row">
+        <span id="lbl-channel" class="field-lbl"></span>
+        <div id="channel-radios" class="pill-group"></div>
+      </div>
+      <div class="radio-row">
+        <span id="lbl-payment" class="field-lbl"></span>
+        <div id="payment-radios" class="pill-group"></div>
+      </div>
+      <textarea id="compose-message" class="textarea" rows="12"></textarea>
+      <div class="compose-actions">
+        <button type="button" id="btn-copy" class="btn btn-primary"></button>
+        <a id="btn-mailto" class="btn btn-primary hidden" target="_blank" rel="noopener"></a>
+      </div>
+    </div>
+  </aside>
+
+  <div id="clients-detail-backdrop" class="clients-detail-backdrop hidden"></div>
+  <aside id="clients-detail-drawer" class="clients-detail-drawer" aria-hidden="true">
+    <div class="clients-detail-drawer-inner">
+      <div class="clients-detail-head">
+        <h3 id="lbl-clients-detail" class="clients-detail-title"></h3>
+        <button type="button" id="btn-client-detail-close" class="compose-drawer-close" aria-label="Close">×</button>
+      </div>
+      <div id="clients-detail-body" class="clients-detail-body"></div>
+    </div>
+  </aside>
+
+  <!-- Renew modal -->
+  <dialog id="modal-renew" class="modal">
+    <form id="form-renew" method="dialog" class="modal-body">
+      <h3 id="renew-title"></h3>
+      <p id="renew-client-name" class="renew-client-name"></p>
+      <label class="field-lbl" id="lbl-renew-date"></label>
+      <input id="renew-date" class="input" type="date" required />
+      <label class="checkbox-row hidden" id="renew-reset-wrap">
+        <input type="checkbox" id="renew-reset-ms" />
+        <span id="lbl-renew-reset"></span>
+      </label>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="btn-renew-submit"></button>
+        <button type="button" class="btn btn-secondary" id="btn-renew-close-client"></button>
+        <button type="button" class="btn btn-secondary" id="btn-renew-cancel"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Add client modal -->
+  <dialog id="modal-add" class="modal">
+    <form id="form-add" method="dialog" class="modal-body">
+      <h3 id="modal-add-title"></h3>
+      <label class="field-lbl" id="lbl-mode"></label>
+      <select id="add-mode" class="select">
+        <option value="single"></option>
+        <option value="milestone"></option>
+      </select>
+      <label class="field-lbl" id="lbl-client-name"></label>
+      <input id="add-name" class="input" required />
+      <label class="field-lbl" id="lbl-add-group"></label>
+      <input id="add-group" class="input" list="group-suggestions" />
+      <label class="field-lbl" id="lbl-add-client-numbers"></label>
+      <input id="add-client-numbers" class="input" type="text" autocomplete="off" />
+      <p class="schedule-hint" id="lbl-add-client-numbers-hint"></p>
+      <label class="field-lbl" id="lbl-contact"></label>
+      <input id="add-contact" class="input" />
+      <label class="field-lbl" id="lbl-email"></label>
+      <input id="add-email" class="input" type="email" />
+      <label class="field-lbl" id="lbl-service"></label>
+      <input id="add-service" class="input" />
+      <label class="field-lbl" id="lbl-end-date"></label>
+      <input id="add-end" class="input" type="date" required />
+      <div id="add-schedule-panel" class="schedule-panel hidden">
+        <label class="field-lbl" id="lbl-schedule-title"></label>
+        <p class="schedule-hint" id="lbl-schedule-end-hint"></p>
+        <p class="schedule-help" id="lbl-schedule-help"></p>
+        <div class="schedule-quick">
+          <label class="field-lbl" id="lbl-schedule-first"></label>
+          <input id="add-schedule-first" class="input" type="date" />
+          <div class="schedule-quick-btns">
+            <button type="button" id="btn-schedule-10w1" class="btn btn-secondary btn-xs"></button>
+            <button type="button" id="btn-schedule-8w2" class="btn btn-secondary btn-xs"></button>
+            <button type="button" id="btn-schedule-4x3" class="btn btn-secondary btn-xs"></button>
+            <button type="button" id="btn-schedule-2x6" class="btn btn-secondary btn-xs"></button>
+            <button type="button" id="btn-schedule-add" class="btn btn-primary btn-xs btn-schedule-add"></button>
+          </div>
+        </div>
+        <div id="add-schedule-rows" class="schedule-rows"></div>
+      </div>
+      <label class="field-lbl hidden" id="lbl-total-ms"></label>
+      <input id="add-total-ms" class="input hidden" type="number" min="1" value="4" />
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="btn-add-submit"></button>
+        <button type="button" class="btn btn-secondary" id="btn-add-cancel"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Edit client modal -->
+  <dialog id="modal-edit-client" class="modal">
+    <form id="form-edit-client" method="dialog" class="modal-body">
+      <h3 id="modal-edit-title"></h3>
+      <p id="edit-client-name-caption" class="renew-client-name"></p>
+      <label class="field-lbl" id="lbl-edit-client-name"></label>
+      <input id="edit-name" class="input" required />
+      <label class="field-lbl" id="lbl-edit-group"></label>
+      <input id="edit-group" class="input" list="group-suggestions" />
+      <label class="field-lbl" id="lbl-edit-client-numbers"></label>
+      <input id="edit-client-numbers" class="input" type="text" autocomplete="off" />
+      <p class="schedule-hint" id="lbl-edit-client-numbers-hint"></p>
+      <label class="field-lbl" id="lbl-edit-contact"></label>
+      <input id="edit-contact" class="input" />
+      <label class="field-lbl" id="lbl-edit-email"></label>
+      <input id="edit-email" class="input" type="email" />
+      <label class="field-lbl" id="lbl-edit-service"></label>
+      <input id="edit-service" class="input" />
+      <label class="field-lbl" id="lbl-edit-end-date"></label>
+      <input id="edit-end" class="input" type="date" required />
+      <p id="edit-ms-hint" class="schedule-hint hidden"></p>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="btn-edit-save"></button>
+        <button type="button" class="btn btn-secondary" id="btn-edit-cancel"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Edit schedule modal -->
+  <dialog id="modal-schedule" class="modal modal-wide">
+    <form id="form-schedule" method="dialog" class="modal-body">
+      <h3 id="schedule-edit-title"></h3>
+      <p id="schedule-edit-client-name" class="renew-client-name"></p>
+      <p class="schedule-help" id="lbl-schedule-edit-help"></p>
+      <div class="schedule-quick">
+        <label class="field-lbl" id="lbl-edit-schedule-first"></label>
+        <input id="edit-schedule-first" class="input" type="date" />
+        <div class="schedule-quick-btns">
+          <button type="button" id="btn-edit-schedule-10w1" class="btn btn-secondary btn-xs"></button>
+          <button type="button" id="btn-edit-schedule-8w2" class="btn btn-secondary btn-xs"></button>
+          <button type="button" id="btn-edit-schedule-4x3" class="btn btn-secondary btn-xs"></button>
+          <button type="button" id="btn-edit-schedule-2x6" class="btn btn-secondary btn-xs"></button>
+          <button type="button" id="btn-edit-schedule-add" class="btn btn-primary btn-xs btn-schedule-add"></button>
+        </div>
+      </div>
+      <div id="edit-schedule-rows" class="schedule-rows"></div>
+      <p class="schedule-hint" id="lbl-edit-schedule-end-hint"></p>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="btn-schedule-save"></button>
+        <button type="button" class="btn btn-secondary" id="btn-schedule-cancel"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Manage modal -->
+  <dialog id="modal-manage" class="modal modal-wide">
+    <div class="modal-body">
+      <h3 id="modal-manage-title"></h3>
+      <div id="manage-list" class="manage-list"></div>
+      <button type="button" class="btn btn-secondary" id="btn-manage-close"></button>
+    </div>
+  </dialog>
+
+  <!-- Settings modal -->
+  <dialog id="modal-settings" class="modal modal-wide">
+    <div class="modal-body">
+      <h3 id="modal-settings-title"></h3>
+      <section class="data-path-settings-section">
+        <h4 id="data-path-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="data-path-settings-desc" class="lan-settings-desc"></p>
+        <div class="data-path-row">
+          <input type="text" id="data-path-input" class="input data-path-input" autocomplete="off" spellcheck="false" />
+          <button type="button" id="btn-data-path-browse" class="btn btn-secondary btn-sm"></button>
+          <button type="button" id="btn-data-path-apply" class="btn btn-secondary btn-sm hidden"></button>
+          <button type="button" id="btn-data-path-default" class="btn btn-secondary btn-sm"></button>
+        </div>
+        <p id="data-path-status" class="lan-settings-hint"></p>
+        <p id="data-path-restart-hint" class="lan-settings-warn hidden"></p>
+      </section>
+      <section class="collab-settings-section">
+        <h4 id="collab-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="collab-settings-desc" class="lan-settings-desc"></p>
+        <label class="lan-toggle-row">
+          <input type="checkbox" id="collab-enabled" />
+          <span id="lbl-collab-enabled"></span>
+        </label>
+        <p id="collab-lock-status" class="collab-lock-status"></p>
+        <p id="collab-test-hint" class="lan-settings-hint"></p>
+        <div class="collab-settings-actions">
+          <button type="button" id="btn-collab-test-window" class="btn btn-secondary btn-sm"></button>
+          <button type="button" id="btn-collab-force-unlock" class="btn btn-secondary btn-sm"></button>
+        </div>
+        <div id="collab-password-panel" class="collab-password-panel hidden">
+          <h5 id="collab-password-title" class="collab-password-subtitle"></h5>
+          <p id="collab-password-desc" class="lan-settings-hint"></p>
+          <form id="form-change-password" class="collab-password-form">
+            <label class="collab-password-field">
+              <span id="lbl-pw-current"></span>
+              <input type="password" id="pw-current" class="input" autocomplete="current-password" />
+            </label>
+            <label class="collab-password-field">
+              <span id="lbl-pw-new"></span>
+              <input type="password" id="pw-new" class="input" autocomplete="new-password" />
+            </label>
+            <label class="collab-password-field">
+              <span id="lbl-pw-confirm"></span>
+              <input type="password" id="pw-confirm" class="input" autocomplete="new-password" />
+            </label>
+            <button type="submit" id="btn-change-password" class="btn btn-secondary btn-sm"></button>
+          </form>
+          <div id="collab-admin-reset-panel" class="collab-admin-reset-panel hidden">
+            <h5 id="collab-admin-reset-title" class="collab-password-subtitle"></h5>
+            <p id="collab-admin-reset-desc" class="lan-settings-hint"></p>
+            <form id="form-admin-reset-password" class="collab-password-form">
+              <label class="collab-password-field">
+                <span id="lbl-pw-target-user"></span>
+                <select id="pw-target-user" class="select"></select>
+              </label>
+              <label class="collab-password-field">
+                <span id="lbl-pw-admin-confirm"></span>
+                <input type="password" id="pw-admin-confirm" class="input" autocomplete="current-password" />
+              </label>
+              <label class="collab-password-field">
+                <span id="lbl-pw-reset-new"></span>
+                <input type="password" id="pw-reset-new" class="input" autocomplete="new-password" />
+              </label>
+              <label class="collab-password-field">
+                <span id="lbl-pw-reset-confirm"></span>
+                <input type="password" id="pw-reset-confirm" class="input" autocomplete="new-password" />
+              </label>
+              <button type="submit" id="btn-admin-reset-password" class="btn btn-secondary btn-sm"></button>
+            </form>
+          </div>
+        </div>
+      </section>
+      <section class="about-settings-section">
+        <h4 id="about-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="about-version" class="about-version"></p>
+        <p id="about-tagline" class="about-tagline"></p>
+        <p id="about-footer" class="about-footer"></p>
+      </section>
+      <section class="notify-settings-section">
+        <h4 id="notify-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="notify-settings-desc" class="lan-settings-desc"></p>
+        <label class="lan-toggle-row">
+          <input type="checkbox" id="notify-enabled" />
+          <span id="lbl-notify-enabled"></span>
+        </label>
+        <p id="notify-preview" class="notify-preview hidden"></p>
+      </section>
+      <section class="sample-settings-section">
+        <h4 id="sample-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="sample-settings-desc" class="lan-settings-desc"></p>
+        <label class="lan-toggle-row">
+          <input type="checkbox" id="sample-seed-enabled" />
+          <span id="lbl-sample-seed-enabled"></span>
+        </label>
+        <p id="sample-client-count" class="sample-client-count"></p>
+        <div class="sample-settings-actions">
+          <button type="button" id="btn-sample-load" class="btn btn-secondary btn-sm"></button>
+          <button type="button" id="btn-sample-clear" class="btn btn-secondary btn-sm"></button>
+        </div>
+      </section>
+      <section class="import-settings-section">
+        <h4 id="import-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="import-settings-desc" class="lan-settings-desc"></p>
+        <label class="lan-toggle-row">
+          <input type="checkbox" id="import-replace-enabled" />
+          <span id="lbl-import-replace"></span>
+        </label>
+        <div class="import-settings-actions">
+          <button type="button" id="btn-import-template" class="btn btn-secondary btn-sm"></button>
+          <button type="button" id="btn-import-excel" class="btn btn-secondary btn-sm"></button>
+          <input type="file" id="import-excel-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="hidden" />
+        </div>
+        <p id="import-excel-status" class="lan-settings-hint hidden"></p>
+      </section>
+      <section class="activity-settings-section">
+        <h4 id="activity-settings-title" class="lan-settings-subtitle"></h4>
+        <ul id="activity-list" class="activity-list"></ul>
+      </section>
+      <section class="lan-settings-section">
+        <h4 id="lan-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="lan-settings-desc" class="lan-settings-desc"></p>
+        <label class="lan-toggle-row">
+          <input type="checkbox" id="lan-enabled" />
+          <span id="lbl-lan-enabled"></span>
+        </label>
+        <p id="lan-settings-warn" class="lan-settings-warn"></p>
+        <p id="lan-settings-hint" class="lan-settings-hint"></p>
+        <p id="lan-glance-hint" class="lan-settings-hint"></p>
+        <div id="lan-qr-panel" class="lan-qr-panel hidden">
+          <img id="lan-qr-img" class="lan-qr-img" alt="QR code" width="200" height="200" />
+          <p id="lan-url-text" class="lan-url-text"></p>
+          <button type="button" id="btn-lan-copy" class="btn btn-secondary btn-sm"></button>
+        </div>
+        <p id="lan-no-ip" class="lan-no-ip hidden"></p>
+      </section>
+      <section class="backup-settings-section">
+        <h4 id="backup-settings-title" class="lan-settings-subtitle"></h4>
+        <p id="backup-settings-desc" class="lan-settings-desc"></p>
+        <p id="backup-settings-status" class="backup-settings-status"></p>
+        <label class="backup-pick-row" for="backup-pick">
+          <span id="lbl-backup-pick"></span>
+          <select id="backup-pick" class="select backup-pick-select"></select>
+        </label>
+        <div class="backup-settings-actions">
+          <button type="button" id="btn-backup-restore-selected" class="btn btn-secondary btn-sm"></button>
+          <button type="button" id="btn-backup-restore" class="btn btn-secondary btn-sm"></button>
+        </div>
+      </section>
+      <button type="button" class="btn btn-secondary" id="btn-settings-close"></button>
+    </div>
+  </dialog>
+
+  <datalist id="group-suggestions"></datalist>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/js/app.js?v=47"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+[
+  {
+    "note": "Fictional demo data only — safe to commit. Streamlit Cloud uses in-memory session seed, not this file.",
+    "client_name": "Client A — Tutoring",
+    "client_email": "client-a@example.com"
+  },
+  {
+    "client_name": "Client B — Gym",
+    "client_email": "client-b@example.com"
+  },
+  {
+    "client_name": "Client C — Wellness Co.",
+    "client_email": "client-c@example.com"
+  },
+  {
+    "client_name": "Client D — Maintenance",
+    "client_email": "client-d@example.com"
+  }
+]

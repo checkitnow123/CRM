@@ -1,0 +1,6 @@
+{
+  "priority_days": 30,
+  "warning_days": 30,
+  "critical_days": 14,
+  "urgent_days": 7
+}

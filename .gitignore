@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv/
+venv/
+
+# Build outputs
+**/dist/
+**/build/
+**/release/
+*.zip
+*.rar
+*.spec.bak
+
+# Local runtime data (do not publish)
+**/data/clients.json
+**/data/activity_log.json
+**/data/editing.lock
+**/data/startup.log
+**/data/backups/
+
+# Airlink client delivery (keep private)
+airlink/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.cursor/

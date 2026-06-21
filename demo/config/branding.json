@@ -1,0 +1,9 @@
+{
+  "appName": "CheckItNow",
+  "tagline": "Client & service CRM",
+  "subtitle": "Track contracts, sessions, and renewals.",
+  "logo": "/assets/logo.png",
+  "logoAlt": "CheckItNow",
+  "primaryColor": "#007AFF",
+  "footerNote": "Demo — swap config/branding.json + web/assets/logo.png per client."
+}

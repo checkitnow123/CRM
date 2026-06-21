@@ -1,0 +1,48 @@
+CHECKITNOW — END USER LICENSE AGREEMENT (EULA)
+
+Last updated: June 2026
+
+IMPORTANT — READ BEFORE USE
+
+This software is licensed, not sold. By installing or using CheckItNow
+("Software"), you agree to this EULA. If you do not agree, do not use
+the Software.
+
+1. LICENSE GRANT
+   You receive a non-exclusive, non-transferable license to use one (1)
+   copy of the Software on computers you own or control, subject to
+   this EULA.
+
+2. RESTRICTIONS
+   You may NOT:
+   - Redistribute, resell, sublicense, or publish the Software
+   - Reverse-engineer, decompile, or extract source code except where
+     law explicitly permits
+   - Remove proprietary notices or branding
+   - Use the Software to build a competing product for third-party sale
+
+3. DATA & PRIVACY
+   The Software stores data locally on your device (e.g. clients.json).
+   The licensor does not receive your client data. You are solely
+   responsible for backups and compliance with applicable privacy laws.
+
+4. NO WARRANTY — "AS IS"
+   THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY
+   OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS
+   FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+5. LIMITATION OF LIABILITY
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR SHALL NOT BE
+   LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR
+   PUNITIVE DAMAGES, OR ANY LOSS OF DATA, PROFITS, OR BUSINESS
+   INTERRUPTION, ARISING FROM USE OF THE SOFTWARE.
+
+6. SUPPORT & CUSTOM BUILDS
+   Standard support and custom branding/workflow builds are available
+   separately by email: checkitnow123@gmail.com
+
+7. TERMINATION
+   This license terminates automatically if you breach this EULA.
+   Upon termination, you must cease use and destroy all copies.
+
+© CheckItNow. All rights reserved.
