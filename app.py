@@ -425,14 +425,14 @@ LANG = {
             "**Your own branded `.exe` — from $1,499 USD**\n\n"
             "Tell us your industry, reminder rules, and export needs. "
             "We deliver a plug-and-play desktop CRM, typically within **48 hours**.\n\n"
-            "Email: **checkitnow123@gmail.com**"
+            "Email: **checkitnow1203@gmail.com**"
         ),
         "footer_cta": (
             "**Enterprise custom CRM — quoted from $9,999 USD**\n\n"
             "Agencies charge five figures for offline client tracking, milestone schedules, "
             "and renewal reminders built from scratch. CheckItNow is already flight-tested.\n\n"
             "**Launch offer — demo to delivery from $1,499 USD**\n\n"
-            "Email **checkitnow123@gmail.com** with your workflow. "
+            "Email **checkitnow1203@gmail.com** with your workflow. "
             "We reply within 24 hours with scope and timeline."
         ),
     },
@@ -2902,7 +2902,7 @@ def _md_to_html(text: str) -> str:
         line = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", line)
         line = re.sub(
             r"checkitnow123@gmail\.com",
-            r'<a href="mailto:checkitnow123@gmail.com">checkitnow123@gmail.com</a>',
+            r'<a href="mailto:checkitnow1203@gmail.com">checkitnow1203@gmail.com</a>',
             line,
         )
         parts.append(f"<p>{line}</p>")

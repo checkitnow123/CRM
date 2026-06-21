@@ -6,7 +6,7 @@ import streamlit as st
 
 # Update this after Render deploy (Step 3).
 DEMO_URL = "https://YOUR-APP.onrender.com"
-CONTACT_EMAIL = "checkitnow123@gmail.com"
+CONTACT_EMAIL = "checkitnow1203@gmail.com"
 
 st.set_page_config(
     page_title="CheckItNow — Client & service CRM",
