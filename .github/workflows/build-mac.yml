@@ -28,6 +28,8 @@ jobs:
           cache-dependency-path: demo/requirements.txt
 
       - name: Build and package
+        env:
+          UNIVERSAL2: "0"
         run: |
           chmod +x build_mac.sh package_itch_release_mac.sh
           ./build_mac.sh

@@ -11,7 +11,7 @@ block_cipher = None
 root = Path(SPECPATH)
 is_mac = sys.platform == "darwin"
 mac_target_arch = None
-if is_mac and os.environ.get("UNIVERSAL2", "1") == "1":
+if is_mac and os.environ.get("UNIVERSAL2", "0") == "1":
     mac_target_arch = "universal2"
 
 hiddenimports = [

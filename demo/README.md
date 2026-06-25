@@ -117,7 +117,7 @@ Itch 零售 zip：
    - `CheckItNow-Mac-folder` → 解壓檢查用
 4. 打 tag（例如 `v1.6.0`）push 上去都會自動 build
 
-CI 產出 **universal2**（Apple Silicon + Intel）zip。未簽名，用戶首次可能要右鍵 Open。
+CI 產出 **Apple Silicon (arm64)** zip（GitHub Mac runner 原生架構）。舊 Intel Mac 唔支援；未簽名，用戶首次可能要右鍵 Open。
 
 開發預覽：`python run_dev.py` → http://127.0.0.1:8765
 
