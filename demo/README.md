@@ -66,7 +66,7 @@ python run_desktop.py
 | 已完成 | 里程碑客戶 | 追蹤看板 |
 | 已逾期 | 逾期 | 追蹤看板 |
 
-## 打包 EXE
+## 打包 EXE（Windows）
 
 已與 Airlink 版功能同步（Clients 分組／Closed、Milestones 提醒、排期編輯、Excel 匯出等）：
 
@@ -76,6 +76,48 @@ powershell -ExecutionPolicy Bypass -File build_exe.ps1
 ```
 
 輸出：`dist\CheckItNow\CheckItNow.exe` — 整個 `CheckItNow\` 資料夾 zip 交付。
+
+Itch 零售 zip：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File package_itch_release.ps1
+```
+
+## 打包 Mac 版（.app）
+
+**必須喺 macOS 機 build**（Windows 無法產出 `.app`）。流程同 Windows demo 一樣：本機 server + pywebview 視窗 + `data/` 喺 app 隔離。
+
+```bash
+cd demo
+chmod +x build_mac.sh package_itch_release_mac.sh
+./build_mac.sh
+```
+
+輸出：`dist/CheckItNow/CheckItNow.app` — 連同 `data/`、`config/` 一齊 zip。
+
+Itch 零售 zip：
+
+```bash
+./package_itch_release_mac.sh
+```
+
+輸出：`release/CheckItNow-Mac-v1.6.0.zip`
+
+注意：
+- 首次開啟未簽名 app：右鍵 → Open
+- 正式出街建議 **Apple Developer 簽名 + notarize**
+- Mac 通知用系統 Notification Center（唔使 winotify）
+
+### 冇 Mac？用 GitHub Actions 雲端 build
+
+1. Push repo 去 GitHub（要包含 `demo/` 同 `.github/workflows/build-mac.yml`）
+2. GitHub → **Actions** → **Build macOS app** → **Run workflow**
+3. 約 5–10 分鐘後，喺該次 run 底部 **Artifacts** 下載：
+   - `CheckItNow-Mac-itch-zip` → 直接 upload 去 itch.io
+   - `CheckItNow-Mac-folder` → 解壓檢查用
+4. 打 tag（例如 `v1.6.0`）push 上去都會自動 build
+
+CI 產出 **universal2**（Apple Silicon + Intel）zip。未簽名，用戶首次可能要右鍵 Open。
 
 開發預覽：`python run_dev.py` → http://127.0.0.1:8765
 

@@ -107,7 +107,7 @@ code{{background:#f3f4f6;padding:0.15rem 0.35rem;border-radius:4px}}</style></he
 <body><h1>CheckItNow could not start</h1>
 <p>The local server did not respond on <code>{HOST}:{PORT}</code>.</p>
 <p>{safe}</p>
-<p>See <code>data/startup.log</code> next to the EXE for details, then restart the app.</p>
+<p>See <code>data/startup.log</code> next to the app for details, then restart.</p>
 </body></html>"""
 
 
@@ -147,13 +147,24 @@ def main() -> None:
         "js_api": DesktopApi(),
     }
     if ready:
-        webview.create_window(title, URL, **window_kwargs)
+        window = webview.create_window(title, URL, **window_kwargs)
     else:
-        webview.create_window(
+        window = webview.create_window(
             title,
             html=_error_html("Please close other CheckItNow windows, then try again."),
             **window_kwargs,
         )
+
+    def _on_closing() -> bool:
+        try:
+            from logic.collab import release_locks_on_shutdown
+
+            release_locks_on_shutdown()
+        except Exception:
+            _startup_log("Lock release on close failed")
+        return True
+
+    window.events.closing += _on_closing
     webview.start(debug=not getattr(sys, "frozen", False))
 
 

@@ -13,9 +13,13 @@ def is_frozen() -> bool:
 
 
 def app_root() -> Path:
-    """Writable root — folder containing the .exe when packaged."""
+    """Writable root — folder containing the launcher when packaged."""
     if is_frozen():
-        return Path(sys.executable).resolve().parent
+        exe = Path(sys.executable).resolve()
+        if sys.platform == "darwin":
+            # .../CheckItNow/CheckItNow.app/Contents/MacOS/CheckItNow
+            return exe.parent.parent.parent.parent
+        return exe.parent
     return Path(__file__).resolve().parent.parent
 
 

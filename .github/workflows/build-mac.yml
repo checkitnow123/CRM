@@ -1,0 +1,48 @@
+name: Build macOS app
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+    paths:
+      - "demo/**"
+      - ".github/workflows/build-mac.yml"
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: demo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: demo/requirements.txt
+
+      - name: Build and package
+        run: |
+          chmod +x build_mac.sh package_itch_release_mac.sh
+          ./build_mac.sh
+          ./package_itch_release_mac.sh
+
+      - name: Upload Itch zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: CheckItNow-Mac-itch-zip
+          path: demo/release/CheckItNow-Mac-v*.zip
+          if-no-files-found: error
+
+      - name: Upload app folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: CheckItNow-Mac-folder
+          path: demo/release/CheckItNow-Mac/
+          if-no-files-found: error

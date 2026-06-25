@@ -1,7 +1,9 @@
-"""Desktop expiry notifications (Windows toast when app is running)."""
+"""Desktop expiry notifications when the app is running."""
 
 from __future__ import annotations
 
+import subprocess
+import sys
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -62,7 +64,28 @@ def should_notify_now() -> tuple[bool, dict[str, int], str, str]:
     return True, counts, "", ""
 
 
-def show_desktop_toast(title: str, body: str) -> bool:
+def _escape_applescript(text: str) -> str:
+    return text.replace("\\", "\\\\").replace('"', '\\"')
+
+
+def _show_macos_notification(title: str, body: str) -> bool:
+    try:
+        script = (
+            f'display notification "{_escape_applescript(body)}" '
+            f'with title "{_escape_applescript(title)}"'
+        )
+        subprocess.run(
+            ["osascript", "-e", script],
+            check=False,
+            capture_output=True,
+            timeout=5,
+        )
+        return True
+    except Exception:
+        return False
+
+
+def _show_windows_notification(title: str, body: str) -> bool:
     try:
         from winotify import Notification
 
@@ -71,6 +94,14 @@ def show_desktop_toast(title: str, body: str) -> bool:
         return True
     except Exception:
         return False
+
+
+def show_desktop_toast(title: str, body: str) -> bool:
+    if sys.platform == "darwin":
+        return _show_macos_notification(title, body)
+    if sys.platform == "win32":
+        return _show_windows_notification(title, body)
+    return False
 
 
 def maybe_send_desktop_notification(L: str = "en") -> dict[str, Any]:

@@ -1,7 +1,10 @@
-"""Build CheckItNow.ico + web/assets/logo.png from CheckItNow-icon.png (transparent bg)."""
+"""Build CheckItNow.ico + CheckItNow.icns + web/assets/logo.png from CheckItNow-icon.png."""
 
 from __future__ import annotations
 
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 from PIL import Image
@@ -9,8 +12,21 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "CheckItNow-icon.png"
 ICO = ROOT / "CheckItNow.ico"
+ICNS = ROOT / "CheckItNow.icns"
 LOGO = ROOT / "web" / "assets" / "logo.png"
 SIZES = (256, 128, 64, 48, 32, 16)
+ICNS_SPECS = [
+    (16, "16x16"),
+    (32, "16x16@2x"),
+    (32, "32x32"),
+    (64, "32x32@2x"),
+    (128, "128x128"),
+    (256, "128x128@2x"),
+    (256, "256x256"),
+    (512, "256x256@2x"),
+    (512, "512x512"),
+    (1024, "512x512@2x"),
+]
 
 
 def _corner_bg(im: Image.Image) -> tuple[int, int, int]:
@@ -80,16 +96,45 @@ def prepare_source(im: Image.Image) -> Image.Image:
     return pad_to_square(trim_transparent(remove_dark_background(im)))
 
 
-def build_icon() -> None:
-    if not SRC.exists():
-        raise SystemExit(f"Missing source icon: {SRC}")
+def build_icns(master: Image.Image) -> None:
+    if sys.platform != "darwin":
+        print("Skipping .icns (run on macOS to build CheckItNow.icns)")
+        return
+    iconset = ROOT / "CheckItNow.iconset"
+    if iconset.exists():
+        shutil.rmtree(iconset)
+    iconset.mkdir()
+    for size, name in ICNS_SPECS:
+        master.resize((size, size), Image.Resampling.LANCZOS).save(
+            iconset / f"icon_{name}.png"
+        )
+    subprocess.run(
+        ["iconutil", "-c", "icns", str(iconset), "-o", str(ICNS)],
+        check=True,
+    )
+    shutil.rmtree(iconset)
+    print(f"Wrote {ICNS.name}")
 
-    img = prepare_source(Image.open(SRC))
+
+def resolve_source() -> Path:
+    for candidate in (SRC, LOGO, ICO):
+        if candidate.exists():
+            return candidate
+    raise SystemExit(
+        f"Missing icon source — add one of: {SRC.name}, {LOGO.name}, {ICO.name}"
+    )
+
+
+def build_icon() -> None:
+    source = resolve_source()
+    img = prepare_source(Image.open(source))
     layers = [img.resize((s, s), Image.Resampling.LANCZOS) for s in SIZES]
     LOGO.parent.mkdir(parents=True, exist_ok=True)
     layers[0].save(ICO, format="ICO", sizes=[(s, s) for s in SIZES])
     layers[0].save(LOGO)
     print(f"Wrote {ICO.name} + {LOGO.relative_to(ROOT)}")
+    master = img.resize((1024, 1024), Image.Resampling.LANCZOS)
+    build_icns(master)
 
 
 if __name__ == "__main__":
