@@ -14,11 +14,7 @@ echo "==> Building app bundle..."
 pkill -x CheckItNow 2>/dev/null || true
 sleep 1
 export PYTHONPATH=""
-PYINSTALLER_ARGS=(--noconfirm --clean)
-if [[ "${UNIVERSAL2:-1}" == "1" ]]; then
-    PYINSTALLER_ARGS+=(--target-arch universal2)
-fi
-pyinstaller "${PYINSTALLER_ARGS[@]}" CheckItNow.spec
+pyinstaller --noconfirm --clean CheckItNow.spec
 
 APP_SRC="dist/CheckItNow.app"
 if [[ ! -d "$APP_SRC" ]]; then

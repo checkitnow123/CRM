@@ -3,12 +3,16 @@
 # macOS:    pyinstaller --noconfirm CheckItNow.spec  → dist/CheckItNow.app
 
 # -*- mode: python ; coding: utf-8 -*-
+import os
 import sys
 from pathlib import Path
 
 block_cipher = None
 root = Path(SPECPATH)
 is_mac = sys.platform == "darwin"
+mac_target_arch = None
+if is_mac and os.environ.get("UNIVERSAL2", "1") == "1":
+    mac_target_arch = "universal2"
 
 hiddenimports = [
     "server",
@@ -99,7 +103,7 @@ exe = EXE(
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=is_mac,
-    target_arch=None,
+    target_arch=mac_target_arch,
     codesign_identity=None,
     entitlements_file=None,
     icon=app_icon,
